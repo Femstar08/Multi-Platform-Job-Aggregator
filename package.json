@@ -1,0 +1,35 @@
+{
+  "name": "job-aggregator",
+  "version": "1.0.0",
+  "description": "Multi-platform job scraper for LinkedIn, Indeed, and Glassdoor",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "apify": "^3.5.0",
+    "crawlee": "^3.15.0",
+    "playwright": "^1.40.0",
+    "cheerio": "^1.0.0-rc.12"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "fast-check": "^3.0.0",
+    "nock": "^13.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "jobs",
+    "linkedin",
+    "indeed",
+    "glassdoor",
+    "scraper",
+    "apify"
+  ],
+  "author": "",
+  "license": "ISC"
+}

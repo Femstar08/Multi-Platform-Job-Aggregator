@@ -1,0 +1,123 @@
+{
+  "example1_direct_urls": {
+    "description": "Scrape specific job search URLs",
+    "input": {
+      "startUrls": [
+        {
+          "url": "https://www.linkedin.com/jobs/search/?keywords=software%20engineer&location=San%20Francisco"
+        },
+        {
+          "url": "https://www.indeed.com/jobs?q=software+engineer&l=San+Francisco"
+        },
+        {
+          "url": "https://www.glassdoor.com/Job/jobs.htm?keyword=software+engineer&location=San+Francisco"
+        }
+      ],
+      "maxItems": 50,
+      "maxPages": 3
+    }
+  },
+  
+  "example2_auto_search": {
+    "description": "Auto-generate search URLs for all platforms",
+    "input": {
+      "searchQueries": [
+        "software engineer",
+        "data scientist"
+      ],
+      "location": "San Francisco, CA",
+      "maxItems": 100,
+      "maxPages": 5
+    }
+  },
+  
+  "example3_multiple_locations": {
+    "description": "Search multiple job titles across platforms",
+    "input": {
+      "searchQueries": [
+        "frontend developer",
+        "backend developer",
+        "full stack developer"
+      ],
+      "location": "New York, NY",
+      "maxItems": 150,
+      "maxPages": 5
+    }
+  },
+  
+  "example4_with_proxy": {
+    "description": "Use proxies to avoid rate limiting",
+    "input": {
+      "startUrls": [
+        {
+          "url": "https://www.linkedin.com/jobs/search/?keywords=product%20manager"
+        }
+      ],
+      "maxItems": 200,
+      "maxPages": 10,
+      "proxyConfiguration": {
+        "useApifyProxy": true,
+        "apifyProxyGroups": ["RESIDENTIAL"],
+        "apifyProxyCountry": "US"
+      }
+    }
+  },
+  
+  "example5_remote_jobs": {
+    "description": "Search for remote positions",
+    "input": {
+      "searchQueries": [
+        "remote software engineer",
+        "remote data analyst"
+      ],
+      "location": "Remote",
+      "maxItems": 100
+    }
+  },
+  
+  "example6_entry_level": {
+    "description": "Find entry-level positions",
+    "input": {
+      "searchQueries": [
+        "junior developer",
+        "entry level software engineer",
+        "graduate software engineer"
+      ],
+      "location": "United States",
+      "maxItems": 200
+    }
+  },
+  
+  "example7_specific_company": {
+    "description": "Jobs from specific companies (via direct URLs)",
+    "input": {
+      "startUrls": [
+        {
+          "url": "https://www.linkedin.com/jobs/search/?keywords=software%20engineer&f_C=1441"
+        },
+        {
+          "url": "https://www.indeed.com/jobs?q=software+engineer&l=&jt=fulltime"
+        }
+      ],
+      "maxItems": 50
+    }
+  },
+  
+  "example8_high_volume": {
+    "description": "Large-scale job scraping",
+    "input": {
+      "searchQueries": [
+        "software engineer",
+        "devops engineer",
+        "data engineer",
+        "machine learning engineer"
+      ],
+      "location": "United States",
+      "maxItems": 1000,
+      "maxPages": 20,
+      "proxyConfiguration": {
+        "useApifyProxy": true
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "actorSpecification": 1,
+  "name": "job-aggregator",
+  "title": "Multi-Platform Job Aggregator",
+  "description": "Scrape jobs from LinkedIn, Indeed, and Glassdoor with unified output schema. Perfect for job boards, market research, and recruitment automation.",
+  "version": "1.0.0",
+  "buildTag": "latest",
+  "dockerfile": "./Dockerfile",
+  "defaultRunOptions": {
+    "build": "latest",
+    "timeoutSecs": 3600,
+    "memoryMbytes": 4096
+  },
+  "input": {
+    "title": "Job Aggregator Configuration",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+      "startUrls": {
+        "title": "Job Search URLs",
+        "type": "array",
+        "description": "LinkedIn, Indeed, or Glassdoor job search URLs",
+        "editor": "requestListSources",
+        "prefill": [
+          {
+            "url": "https://www.linkedin.com/jobs/search/?keywords=software%20engineer&location=San%20Francisco"
+          }
+        ]
+      },
+      "searchQueries": {
+        "title": "Search Queries (Alternative)",
+        "type": "array",
+        "description": "Job titles/keywords to search across all platforms",
+        "editor": "stringList"
+      },
+      "location": {
+        "title": "Location",
+        "type": "string",
+        "description": "Job location (used with search queries)",
+        "editor": "textfield"
+      }
+    }
+  }
+}
