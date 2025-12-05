@@ -28,7 +28,7 @@ The system must scrape job listings from multiple job platforms with a unified i
 ### BR-2: Unified Data Schema
 
 **Priority**: High  
-**Status**: ✅ Complete
+**Status**: 🔄 Enhanced
 
 All job data must be normalized to a consistent schema regardless of source.
 
@@ -38,11 +38,14 @@ All job data must be normalized to a consistent schema regardless of source.
 - ✅ Salary normalization (min, max, currency, period)
 - ✅ Metadata fields: postedDate, applicantCount, companyRating
 - ✅ Scraping metadata: \_scrapedAt, \_site
+- ⬜ Duplicate detection fields: \_isDuplicate, \_duplicateOf, sources
+- ⬜ Expiration fields: \_isExpired, \_ageInDays
+- ⬜ Job fingerprint: \_fingerprint (for duplicate detection)
 
 ### BR-3: Flexible Input Options
 
 **Priority**: High  
-**Status**: ✅ Complete
+**Status**: 🔄 Enhanced
 
 Users must be able to provide input in multiple ways.
 
@@ -53,6 +56,13 @@ Users must be able to provide input in multiple ways.
 - ✅ Location filtering
 - ✅ Pagination control (maxPages)
 - ✅ Result limiting (maxItems)
+- ⬜ Platform selection (platforms array)
+- ⬜ Search mode selection (exact vs similar)
+- ⬜ Job age filtering (24h, 7d, 14d, 30d, any)
+- ⬜ Duplicate removal option (removeDuplicates)
+- ⬜ Expired job exclusion (excludeExpired)
+- ⬜ Expiration threshold (expirationDays)
+- ⬜ Search interface mode (quick vs power)
 
 ### BR-4: Reliable Data Extraction
 
@@ -214,6 +224,134 @@ The system must handle large-scale scraping efficiently.
 - ✅ Component/adapter name
 - ✅ URL being processed
 - ✅ Error details with stack trace
+
+### FR-8: Duplicate Detection
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+**Description**: Detect and mark duplicate job listings across platforms.
+
+**Implementation**:
+
+- ⬜ Create duplicate detection utility
+- ⬜ Generate job fingerprint from: normalized title + company + location
+- ⬜ Compare jobs using fingerprint matching
+- ⬜ Mark duplicates with `_isDuplicate: true`
+- ⬜ Add `_duplicateOf` field with original job ID
+- ⬜ Add `sources` array listing all platforms with this job
+- ⬜ Provide `removeDuplicates` input option (default: false)
+
+**Duplicate Detection Algorithm**:
+
+1. ⬜ Normalize job title (lowercase, remove special chars)
+2. ⬜ Normalize company name (lowercase, remove "Inc", "LLC", etc.)
+3. ⬜ Normalize location (city + state/country)
+4. ⬜ Create hash from normalized values
+5. ⬜ Compare hashes to find duplicates
+6. ⬜ Keep first occurrence as original, mark others as duplicates
+
+### FR-9: Expiration Detection
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+**Description**: Identify and filter expired job postings.
+
+**Implementation**:
+
+- ⬜ Create expiration detection utility
+- ⬜ Calculate job age from `postedDate` field
+- ⬜ Compare age against expiration threshold
+- ⬜ Mark expired jobs with `_isExpired: true`
+- ⬜ Add `_ageInDays` field with calculated age
+- ⬜ Provide `expirationDays` input option (default: 30)
+- ⬜ Provide `excludeExpired` input option (default: false)
+
+**Expiration Logic**:
+
+- ⬜ If `postedDate` is missing, assume not expired
+- ⬜ Calculate: `ageInDays = (currentDate - postedDate) / (1000 * 60 * 60 * 24)`
+- ⬜ If `ageInDays > expirationDays`, mark as expired
+- ⬜ Filter expired jobs if `excludeExpired: true`
+
+### FR-10: Search Mode Implementation
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+**Description**: Support exact and similar search modes.
+
+**Implementation**:
+
+- ⬜ Add `searchMode` input parameter: "exact" | "similar" (default: "similar")
+- ⬜ **Exact Mode**: Use quoted search terms where supported
+- ⬜ **Similar Mode**: Use unquoted search terms for broader matching
+- ⬜ Adapt search URL generation per platform and mode
+- ⬜ Document platform-specific search mode behavior
+
+**Platform-Specific Behavior**:
+
+- ⬜ **LinkedIn**: Exact mode uses quotes around keywords
+- ⬜ **Indeed**: Exact mode uses `exactphrase` parameter
+- ⬜ **Glassdoor**: Exact mode uses quotes in search query
+
+### FR-11: Job Age Filtering
+
+**Priority**: Medium  
+**Status**: 🔄 In Progress
+
+**Description**: Filter jobs by posting age.
+
+**Implementation**:
+
+- ⬜ Add `jobAge` input parameter: "24h" | "7d" | "14d" | "30d" | "any" (default: "any")
+- ⬜ Convert age parameter to days: 24h=1, 7d=7, 14d=14, 30d=30, any=null
+- ⬜ Filter jobs where `_ageInDays <= maxAge`
+- ⬜ Pass age filter to platform search URLs where supported
+- ⬜ Apply client-side filtering for platforms without native support
+
+**Age Filter Mapping**:
+
+- ⬜ **LinkedIn**: Use `f_TPR` parameter (r86400, r604800, etc.)
+- ⬜ **Indeed**: Use `fromage` parameter (1, 7, 14, 30)
+- ⬜ **Glassdoor**: Use `fromAge` parameter (1, 7, 14, 30)
+
+### FR-12: Platform Selection
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+**Description**: Allow users to select specific platforms to search.
+
+**Implementation**:
+
+- ⬜ Add `platforms` input parameter: array of "linkedin" | "indeed" | "glassdoor"
+- ⬜ Default to all platforms if not specified: ["linkedin", "indeed", "glassdoor"]
+- ⬜ Validate platform names against supported platforms
+- ⬜ Only create search URLs for selected platforms
+- ⬜ Skip unselected platforms during URL generation
+- ⬜ Log which platforms are being searched
+
+### FR-13: Search Interface Modes
+
+**Priority**: Medium  
+**Status**: 🔄 In Progress
+
+**Description**: Support quick and power search modes.
+
+**Implementation**:
+
+- ⬜ Add `searchInterface` input parameter: "quick" | "power" (default: "quick")
+- ⬜ **Quick Search Defaults**:
+  - ⬜ `searchMode`: "similar"
+  - ⬜ `jobAge`: "any"
+  - ⬜ `platforms`: all
+  - ⬜ `excludeExpired`: false
+  - ⬜ `removeDuplicates`: false
+- ⬜ **Power Search**: User specifies all parameters
+- ⬜ Document available options for each mode
+- ⬜ Validate input combinations
 
 ## Non-Functional Requirements
 
@@ -413,6 +551,81 @@ job-aggregator/
 
 **Status**: ✅ Complete
 
+### US-5: Job Seeker - Remove Duplicate Listings
+
+**As a** job seeker  
+**I want to** see each unique job only once  
+**So that** I don't waste time reviewing the same job from multiple platforms
+
+**Acceptance Criteria**:
+
+- ⬜ Duplicates are automatically detected
+- ⬜ Can choose to remove duplicates from results
+- ⬜ Can see which platforms have the same job
+- ⬜ Original source is preserved
+
+**Status**: 🔄 In Progress
+
+### US-6: Job Seeker - Filter Fresh Jobs
+
+**As a** job seeker  
+**I want to** see only recent job postings  
+**So that** I don't apply to expired or old positions
+
+**Acceptance Criteria**:
+
+- ⬜ Can filter by job age (24h, 7d, 14d, 30d)
+- ⬜ Can exclude expired jobs
+- ⬜ Can see how old each job is
+- ⬜ Default expiration threshold is configurable
+
+**Status**: 🔄 In Progress
+
+### US-7: Job Seeker - Exact Job Title Search
+
+**As a** job seeker  
+**I want to** search for exact job titles  
+**So that** I get precise results without unrelated positions
+
+**Acceptance Criteria**:
+
+- ⬜ Can toggle between exact and similar search
+- ⬜ Exact search uses quoted terms
+- ⬜ Similar search finds related positions
+- ⬜ Search mode works across all platforms
+
+**Status**: 🔄 In Progress
+
+### US-8: Job Seeker - Choose Specific Platforms
+
+**As a** job seeker  
+**I want to** search only on my preferred job platforms  
+**So that** I can focus on sites I trust or prefer
+
+**Acceptance Criteria**:
+
+- ⬜ Can select one or more platforms
+- ⬜ Can select all platforms
+- ⬜ Only selected platforms are searched
+- ⬜ Results show which platform each job came from
+
+**Status**: 🔄 In Progress
+
+### US-9: Power User - Advanced Search Options
+
+**As a** power user  
+**I want to** access all available search filters  
+**So that** I can fine-tune my job search precisely
+
+**Acceptance Criteria**:
+
+- ⬜ Can use power search mode with all filters
+- ⬜ Can combine multiple filters (age, platform, search mode, etc.)
+- ⬜ Can use quick search for simple queries
+- ⬜ Both modes produce consistent output
+
+**Status**: 🔄 In Progress
+
 ## Constraints
 
 ### C-1: Rate Limiting
@@ -458,6 +671,96 @@ job-aggregator/
 - ✅ Test coverage: 70%+
 - ✅ Error handling: Comprehensive
 
+### BR-6: Duplicate Detection and Filtering
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+The system must detect and handle duplicate job listings across platforms.
+
+**Acceptance Criteria**:
+
+- ⬜ Detect duplicate jobs based on title, company, and location
+- ⬜ Mark duplicates with `_isDuplicate` flag
+- ⬜ Provide option to filter out duplicates from results
+- ⬜ Track which platforms have the same job listing
+- ⬜ Preserve original source information for all duplicates
+
+### BR-7: Job Expiration Filtering
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+The system must identify and filter expired job postings.
+
+**Acceptance Criteria**:
+
+- ⬜ Check if job postings are expired based on posted date
+- ⬜ Mark expired jobs with `_isExpired` flag
+- ⬜ Provide option to exclude expired jobs from results
+- ⬜ Calculate job age in days
+- ⬜ Support configurable expiration threshold (default: 30 days)
+
+### BR-8: Advanced Search Modes
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+The system must support different search modes for keyword matching.
+
+**Acceptance Criteria**:
+
+- ⬜ **Exact Match Mode**: Search for exact keyword phrases
+- ⬜ **Similar Search Mode**: Search for related terms and variations
+- ⬜ User can toggle between search modes via input parameter
+- ⬜ Default to similar search for broader results
+- ⬜ Document search mode behavior for each platform
+
+### BR-9: Job Age Filtering
+
+**Priority**: Medium  
+**Status**: 🔄 In Progress
+
+Users must be able to filter jobs by posting age.
+
+**Acceptance Criteria**:
+
+- ⬜ Support filtering by: "Within 24 hours", "Within 7 days", "Within 14 days", "Within 30 days", "Any time"
+- ⬜ Calculate job age from posted date
+- ⬜ Filter results based on selected age range
+- ⬜ Default to "Any time" if not specified
+- ⬜ Handle missing posted dates gracefully
+
+### BR-10: Platform Selection
+
+**Priority**: High  
+**Status**: 🔄 In Progress
+
+Users must be able to select which job platforms to search.
+
+**Acceptance Criteria**:
+
+- ⬜ Support individual platform selection (LinkedIn, Indeed, Glassdoor)
+- ⬜ Support "All platforms" option
+- ⬜ Allow multiple platform selection
+- ⬜ Default to all platforms if not specified
+- ⬜ Skip unselected platforms during search
+
+### BR-11: Search Interface Modes
+
+**Priority**: Medium  
+**Status**: 🔄 In Progress
+
+The system must support both quick search and power search modes.
+
+**Acceptance Criteria**:
+
+- ⬜ **Quick Search**: Simple interface with keywords, location, and platform selection
+- ⬜ **Power Search**: Advanced interface with all filtering options (job age, search mode, salary, job type, etc.)
+- ⬜ Quick search uses sensible defaults for advanced options
+- ⬜ Power search exposes all available filters
+- ⬜ Both modes produce same output schema
+
 ## Future Enhancements
 
 ### Phase 2 Features
@@ -466,7 +769,6 @@ job-aggregator/
 - ⬜ Full job description extraction
 - ⬜ Company details enrichment
 - ⬜ Skills extraction from descriptions
-- ⬜ Cross-site deduplication
 - ⬜ Change detection and alerts
 - ⬜ Email notifications
 - ⬜ API endpoints

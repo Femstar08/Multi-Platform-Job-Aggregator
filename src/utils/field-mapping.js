@@ -1,5 +1,5 @@
 /**
- * Unified Job Schema Definition
+ * Unified Job Schema Definition v1.1
  * All adapters must normalize their data to this schema
  */
 
@@ -34,6 +34,16 @@ const UNIFIED_JOB_SCHEMA = {
   applicantCount: 'number|null',
   companyLogo: 'string|null',
   companyRating: 'number|null',
+  
+  // Duplicate detection (v1.1)
+  _isDuplicate: 'boolean',
+  _duplicateOf: 'string|null',
+  _fingerprint: 'string',
+  sources: 'array', // Array of platform names where this job appears
+  
+  // Expiration detection (v1.1)
+  _isExpired: 'boolean',
+  _ageInDays: 'number|null',
   
   // Scraping metadata
   _scrapedAt: 'string',

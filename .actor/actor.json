@@ -3,7 +3,7 @@
   "name": "job-aggregator",
   "title": "Multi-Platform Job Aggregator",
   "description": "Scrape jobs from LinkedIn, Indeed, and Glassdoor with unified output schema. Perfect for job boards, market research, and recruitment automation.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "buildTag": "latest",
   "dockerfile": "./Dockerfile",
   "defaultRunOptions": {
@@ -38,6 +38,64 @@
         "type": "string",
         "description": "Job location (used with search queries)",
         "editor": "textfield"
+      },
+      "platforms": {
+        "title": "Platforms to Search",
+        "type": "array",
+        "description": "Select which platforms to search (default: all)",
+        "editor": "stringList",
+        "default": ["linkedin", "indeed", "glassdoor"],
+        "prefill": ["linkedin", "indeed", "glassdoor"]
+      },
+      "searchMode": {
+        "title": "Search Mode",
+        "type": "string",
+        "description": "Exact match or similar results",
+        "editor": "select",
+        "enum": ["similar", "exact"],
+        "default": "similar",
+        "enumTitles": ["Similar (broader results)", "Exact (precise match)"]
+      },
+      "jobAge": {
+        "title": "Job Age Filter",
+        "type": "string",
+        "description": "Filter jobs by posting date",
+        "editor": "select",
+        "enum": ["any", "24h", "7d", "14d", "30d"],
+        "default": "any",
+        "enumTitles": ["Any time", "Past 24 hours", "Past week", "Past 2 weeks", "Past month"]
+      },
+      "excludeExpired": {
+        "title": "Exclude Expired Jobs",
+        "type": "boolean",
+        "description": "Remove jobs older than expiration threshold",
+        "editor": "checkbox",
+        "default": false
+      },
+      "removeDuplicates": {
+        "title": "Remove Duplicates",
+        "type": "boolean",
+        "description": "Remove duplicate jobs found across platforms",
+        "editor": "checkbox",
+        "default": false
+      },
+      "expirationDays": {
+        "title": "Expiration Threshold (days)",
+        "type": "integer",
+        "description": "Days until a job is considered expired",
+        "editor": "number",
+        "default": 30,
+        "minimum": 1,
+        "maximum": 365
+      },
+      "searchInterface": {
+        "title": "Search Interface",
+        "type": "string",
+        "description": "Quick search (simple) or Power search (all options)",
+        "editor": "select",
+        "enum": ["quick", "power"],
+        "default": "quick",
+        "enumTitles": ["Quick Search", "Power Search"]
       }
     }
   }

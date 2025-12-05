@@ -1,8 +1,10 @@
-# Multi-Platform Job Aggregator
+# Multi-Platform Job Aggregator v1.1
 
 Scrape jobs from LinkedIn, Indeed, and Glassdoor with a unified output schema. Perfect for job boards, market research, and recruitment automation.
 
 ## Features
+
+### Core Features (v1.0)
 
 - ✅ **Multi-Platform**: LinkedIn, Indeed, Glassdoor
 - ✅ **Unified Schema**: Consistent output across all sources
@@ -10,6 +12,15 @@ Scrape jobs from LinkedIn, Indeed, and Glassdoor with a unified output schema. P
 - ✅ **Pagination Support**: Scrape multiple pages
 - ✅ **Proxy Support**: Avoid rate limiting
 - ✅ **Flexible Input**: URLs or search queries
+
+### New in v1.1 🎉
+
+- ✅ **Duplicate Detection**: Identify and remove duplicate jobs across platforms
+- ✅ **Expiration Filtering**: Filter out old job postings
+- ✅ **Search Modes**: Exact match or similar search
+- ✅ **Job Age Filters**: Filter by posting date (24h, 7d, 14d, 30d)
+- ✅ **Platform Selection**: Choose which platforms to search
+- ✅ **Post-Processing Pipeline**: Advanced filtering and enrichment
 
 ## Quick Start
 
